@@ -2,10 +2,20 @@ package gui;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
+import javax.swing.text.DocumentFilter.FilterBypass;
 
 import backend.Bayes;
 
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 public class BayesFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -42,6 +52,28 @@ public class BayesFrame extends JFrame {
 	pAltE, //absence of evidence
 	pHgivenAltE; //posterior probability given absence of evidence
 	
+	public String newFieldValue = "";
+	
+	@FunctionalInterface
+	private interface JTextFieldListener extends DocumentListener {
+	    void update(DocumentEvent e);
+
+	    @Override
+	    default void insertUpdate(DocumentEvent e) {
+	        update(e);
+	    }
+	    @Override
+	    default void removeUpdate(DocumentEvent e) {
+	        update(e);
+	    }
+	    @Override
+	    default void changedUpdate(DocumentEvent e) {
+	        update(e);
+	    }
+	}
+	
+	
+	
 
 	public BayesFrame(Bayes b) {		
 		super("Bayes Theorem");
@@ -68,6 +100,8 @@ public class BayesFrame extends JFrame {
 			sliders[i].addChangeListener(bayesChange);
 			if (i > 2) sliders[i].setEnabled(false);
 			
+				
+			
 			switch (i) {
 				case 0: pH = (double) sliders[i].getValue() / MAX; break;					
 				case 1: pEgivenH = (double) sliders[i].getValue() / MAX; break;
@@ -83,7 +117,10 @@ public class BayesFrame extends JFrame {
 			}
 			
 			textFields[i] = new JTextField(Double.toString(pH), 15);
-			textFields[i].setEditable(false);
+			if(i > 2) textFields[i].setEditable(false);
+			if(i < 3) {
+				setDocumentListener(textFields[i]);
+			}
 			
 			pane.add(labels[i]);
 			pane.add(sliders[i]);
@@ -150,6 +187,25 @@ public class BayesFrame extends JFrame {
 		
 	  }
 	
+	//Method to handle the JTextField's document
+	private void setDocumentListener(JTextField jTextField) {
+		jTextField.getDocument().addDocumentListener((JTextFieldListener) e -> {
+			newFieldValue = jTextField.getText();
+		});
+		
+		restrictToNumberCharacters( (AbstractDocument) jTextField.getDocument() );
+		
+		jTextField.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {}
+			
+			public void focusLost(FocusEvent e) {
+				
+			}
+		});
+		
+	}
+
 	/**
 	 * Listener for the scrollers
 	 * */
@@ -208,7 +264,48 @@ public class BayesFrame extends JFrame {
 			bfText.setText(Double.toString(bt.getBayesFactor()));
 			
 		}
+	}//end private class
+	
+	/***
+	 * Restricts input types to numbers and to four digits
+	 * @param <b>document</b>: Document of the desired GUI input; e.g., if you want your <code>JTextArea</code> object to only be numbers, type this line of code: <code>installNumberCharacters( (AbstractDocument) JTextArea.getDocument() );</code> 
+	 * @author some guy on StackOverflow
+	 * **/
+	public static void restrictToNumberCharacters(AbstractDocument document) {
+		final int maxCharacters = 6;
+        document.setDocumentFilter(new DocumentFilter() {
+            public void insertString(FilterBypass fb, int offset,
+                    String string, AttributeSet attr)
+                    throws BadLocationException {
+                try {
+                    if(string.length() > 0 ) Double.parseDouble(string);
+                    if ( (fb.getDocument().getLength() + string.length()) <= maxCharacters ) super.insertString(fb, offset, string, attr);
+                    else Toolkit.getDefaultToolkit().beep();
+                } catch (Exception e) {
+                    Toolkit.getDefaultToolkit().beep();
+                    
+                }
 
-	}
+            }
 
-}
+            public void replace(FilterBypass fb, int offset, int length,
+                    String text, AttributeSet attrs)
+                    throws BadLocationException {
+                try {                    
+                	if(text.length() > 0) Double.parseDouble(text);
+                	if( (fb.getDocument().getLength() + text.length()
+       		             - length) <= maxCharacters ) super.replace(fb, offset, length, text, attrs);
+                	else Toolkit.getDefaultToolkit().beep();
+                } catch (Exception e) {
+                    Toolkit.getDefaultToolkit().beep();
+                }
+            }
+        });
+                
+    }
+}//end class
+
+	
+	
+
+
