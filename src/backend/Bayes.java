@@ -32,7 +32,7 @@ public class Bayes {
 	 * */
 	public Bayes(double pH, double eGivenH, double pE) {
 		if((pH > 1.00) || (pE > 1.00) || (eGivenH > 1.00)) {
-			//well... probabilites can't be greater than 1...
+			//well... probabilities can't be greater than 1...
 		}
 		
 		else {
@@ -45,8 +45,8 @@ public class Bayes {
 			else {
 				this.posterior = ((pH * eGivenH) / pE);
 			}
-			this.altHypothesis = 1 - pH;
-			this.altTotalProb = 1 - pE;
+			this.altHypothesis = 1.0 - pH;
+			this.altTotalProb = 1.0 - pE;
 			if (altHypothesis == 0.0) {
 				this.falsePos = 0.0;
 			}
@@ -54,8 +54,8 @@ public class Bayes {
 				this.falsePos = ((pE - eGivenH*pH) / altHypothesis);
 			}
 			
-			this.absenceOfEvidenceConditional = 1 - success;
-			this.absenceOfEvidenceAltConditional = 1 - falsePos;
+			this.absenceOfEvidenceConditional = 1.0 - success;
+			this.absenceOfEvidenceAltConditional = 1.0 - falsePos;
 			if (falsePos == 0.0) {
 				this.likelihood = 0.0;
 			}
@@ -82,7 +82,7 @@ public class Bayes {
 			this.prior = pH;
 			this.success = eGivenH;
 			this.falsePos = eGivenNotH;
-			this.altHypothesis = 1 - pH;
+			this.altHypothesis = 1.0 - pH;
 			this.totalProb = (pH * eGivenH + altHypothesis * eGivenNotH);
 			if (totalProb == 0.0) {
 				this.posterior = 0.0;
@@ -91,9 +91,9 @@ public class Bayes {
 				this.posterior = ((pH * eGivenH) / (pH * eGivenH + altHypothesis * eGivenNotH));
 			}
 			
-			this.altTotalProb = 1 - totalProb;
-			this.absenceOfEvidenceConditional = 1 - success;
-			this.absenceOfEvidenceAltConditional = 1 - falsePos;
+			this.altTotalProb = 1.0 - totalProb;
+			this.absenceOfEvidenceConditional = 1.0 - success;
+			this.absenceOfEvidenceAltConditional = 1.0 - falsePos;
 			if (falsePos == 0.0) {
 				this.likelihood = 0.0;
 			}
@@ -136,8 +136,8 @@ public class Bayes {
 		this.isSuccessRateSet = true;
 		this.isFalsePositiveSet = true;
 		
-		this.absenceOfEvidenceConditional = 1 - success;
-		this.absenceOfEvidenceAltConditional = 1 - falsePos;
+		this.absenceOfEvidenceConditional = 1.0 - success;
+		this.absenceOfEvidenceAltConditional = 1.0 - falsePos;
 		
 		
 	}
@@ -148,7 +148,7 @@ public class Bayes {
 	public void setPrior(double p) {
 		if(p < 1.00) {
 			this.prior = p;
-			this.altHypothesis = 1 - p;
+			this.altHypothesis = 1.0 - p;
 			this.isPriorSet = true;
 		}
 	}
@@ -156,7 +156,7 @@ public class Bayes {
 	public void setSuccessRate(double s) {
 		if(s < 1.00) {
 			this.success = s;
-			this.absenceOfEvidenceConditional = 1 - s;
+			this.absenceOfEvidenceConditional = 1.0 - s;
 			this.isSuccessRateSet = true;
 		}
 	}
@@ -164,7 +164,7 @@ public class Bayes {
 	public void setFalsePositive(double f) {
 		if(f < 1.00) {
 			this.falsePos = f;
-			this.absenceOfEvidenceAltConditional = 1 - f;
+			this.absenceOfEvidenceAltConditional = 1.0 - f;
 			this.isFalsePositiveSet = true;
 		}
 	}
@@ -172,7 +172,7 @@ public class Bayes {
 	public void setTotalProbability(double t) {
 		if(t < 1.00) {
 			this.totalProb = t;
-			this.altTotalProb = 1 - t;
+			this.altTotalProb = 1.0 - t;
 			this.isTotalProbSet = true;
 		}
 	}
@@ -275,8 +275,7 @@ public class Bayes {
 		}
 		
 		else{
-			double hGivenE = ((pH * eGivenH) / (pH * eGivenH)+((1 - pH) * eGivenNotH));
-			return hGivenE;
+			return ((pH * eGivenH) / (pH * eGivenH)+((1.0 - pH) * eGivenNotH));
 		}
 	}
 	
