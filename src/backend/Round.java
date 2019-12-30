@@ -14,43 +14,5 @@ public class Round {
 	    }
 	    return bd.doubleValue();
 	}
-	
-	public static void bubbleSort(int [] array, boolean desc) {
-		boolean isChange;
-		int placeHolder;
-		
-		do {
-			isChange = false;
-			for(int i=0; i < array.length-1; i++) {
-				if(desc) {
-					if(array[i] < array[i+1]) {
-						placeHolder = array[i];
-						array[i] = array[i+1];
-						array[i+1] = placeHolder;
-						isChange = true;
-					}
-				}
-				else {
-					if(array[i] > array[i+1]) {
-						placeHolder = array[i];
-						array[i] = array[i+1];
-						array[i+1] = placeHolder;
-						isChange = true;
-					}
-				}
-			}
-			
-		} while(isChange);
-	}
-	
-	public static void main(String [] args) {
-		int [] a = new int [] {0, 1234, 432, 4, 1};
-		bubbleSort(a, false);
-		
-		for(int i=0; i < a.length; i++) {
-			System.out.println(a[i]);
-		}
-		
-	}
 
 }
